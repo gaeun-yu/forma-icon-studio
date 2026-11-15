@@ -17,21 +17,21 @@
 <section class="stage" id="stage" data-preview="grid" aria-label="아이콘 미리보기">
 <div class="stage-top"><span class="mono muted">Preview</span><div class="preview-controls" aria-label="미리보기 방식"><button type="button" data-preview="grid" aria-label="가이드 표시" title="가이드 표시" aria-pressed="true">⊞</button><button type="button" data-preview="clean" aria-label="가이드 숨기기" title="가이드 숨기기" aria-pressed="false">□</button><button type="button" data-preview="actual" aria-label="실제 크기" title="실제 크기" aria-pressed="false">1×</button></div></div>
 <div class="guides" aria-hidden="true"></div><div class="art" id="art" aria-hidden="true"></div>
-<div class="reference-view" id="referenceView" hidden><img id="thumb" alt="적용한 레퍼런스"><span>레퍼런스</span></div><div class="stage-bottom mono muted"><span id="dimensions"></span><span id="styleCaption"></span></div>
+<div class="stage-bottom mono muted"><span id="dimensions"></span><span id="styleCaption"></span></div>
 </section>
 <div class="specimen"><div><h1 id="iconName">설정</h1><span class="mono muted" id="fileName">settings.svg</span></div><div class="exports"><button type="button" class="ghost" id="copy">SVG 복사</button><button type="button" class="primary" id="download">SVG 다운로드 ↓</button></div></div>
 </div>
 <div class="panel">
 <section class="section name-section"><h2><label for="query">아이콘 이름</label></h2><form id="form" class="query"><input id="query" value="설정" placeholder="예: 검색, search" maxlength="90" autocomplete="off"><button class="primary" type="submit">만들기 ↗</button></form><div class="chips" id="chips"></div><p class="note" id="queryNote" aria-live="polite">한글·영문으로 검색할 수 있어요.</p><details class="more-icon"><summary>전체 아이콘</summary><div class="chips" id="catalog"></div></details></section>
 <section class="section"><h2 id="styleTitle">스타일</h2>
-<div class="seg" role="group" aria-labelledby="styleTitle"><label><input type="radio" name="style" value="round" checked><span>라운드</span></label><label><input type="radio" name="style" value="sharp"><span>샤프</span></label><label><input type="radio" name="style" value="solid"><span>솔리드</span></label></div>
+<div class="seg" role="group" aria-labelledby="styleTitle"><label><input type="radio" name="style" value="round" checked><span>2D 아웃라인</span></label><label><input type="radio" name="style" value="glass"><span>글래스모피즘</span></label><label><input type="radio" name="style" value="solid"><span>Filled</span></label></div>
 <div class="style-grid">
 <label>크기<select id="size"><option>16</option><option>20</option><option selected>24</option><option>32</option><option>40</option><option>48</option><option>64</option><option>96</option><option>128</option></select></label>
 <label>선 굵기 (24px 기준)<span class="range"><input id="weight" type="range" min="0.75" max="3" step="0.05" value="1.5"><output id="weightValue" for="weight"></output></span></label>
-<label>색상<span class="color"><input type="color" id="color" value="#252421"><span class="mono" id="colorValue"></span></span></label>
-<label>여백<select id="padding"><option value="1">기본</option><option value="0.88">넉넉하게</option><option value="1.06">촘촘하게</option></select></label>
+<label>색상 1<span class="color"><input type="color" id="color" value="#252421"><span class="mono" id="colorValue"></span></span></label>
+<label>색상 2<span class="color"><input type="color" id="color2" value="#91b9d9"><span class="mono" id="color2Value"></span></span></label><label>여백<select id="padding"><option value="1">기본</option><option value="0.88">넉넉하게</option><option value="1.06">촘촘하게</option></select></label>
 </div></section>
-<section class="section reference-section"><h2>스타일 레퍼런스</h2><div class="upload"><input type="file" id="reference" accept=".svg,.png,.jpeg,.jpg,.webp"><label for="reference">이미지 추가 ＋</label><button class="ghost" id="clear" type="button" hidden>초기화</button></div><div class="reference-demos" id="demos" aria-label="레퍼런스 예시"></div><p class="note label-file" id="referenceNote" aria-live="polite">이미지를 올리거나 예시를 선택하면 선, 모서리, 비율과 여백을 새 아이콘에 적용해요.</p><div class="style-readout" id="referenceDetails"></div></section>
+
 </div>
 </main>
 <footer><span>Figma 캔버스에 SVG 파일을 드래그해 가져오세요.</span><span class="status" id="status" role="status"></span></footer>
@@ -92,9 +92,9 @@ const icons = [
 ];
 const normalize = value => value.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
 const n = value => +value.toFixed(3);
-const styleLabel = {round:'ROUND',sharp:'SHARP',solid:'SOLID'};
-const referenceHint = $('referenceNote').textContent;
-let active = icons[0], svg = '', referenceUrl, referenceRequest = 0, profile = null;
+const styleLabel = {round:'OUTLINE',glass:'GLASS',solid:'FILLED'};
+
+let active = icons[0], svg = '';
 function render() {
   const style = document.querySelector('[name=style]:checked').value;
   const size = $('size').value;
@@ -102,29 +102,23 @@ function render() {
   const color = $('color').value;
   const scale = +$('padding').value;
   const [key,label,,line,fill,sharp] = active;
-  const solid = style === 'solid';
-  const cap = style === 'round' ? 'round' : (profile?.cap === 'square' ? 'square' : 'butt');
-  const join = style === 'round' ? 'round' : (profile?.join === 'bevel' ? 'bevel' : 'miter');
-  let geometry = solid ? path(key === 'settings' && profile?.mode === 'sharp' ? gear(true) : fill) :
-    style === 'sharp' ? (sharp || line.replace(/rx="[^"]*"/g,'rx="0"')) : line;
-  if (style === 'round' && profile?.radius != null) {
-    geometry = geometry.replace(/rx="[^"]*"/g,'rx="'+profile.radius+'"');
-  }
-  const attributes = solid ? 'fill="'+color+'" fill-rule="evenodd"' :
-    'fill="none" stroke="'+color+'" stroke-width="'+weight+'" stroke-linecap="'+cap+'" stroke-linejoin="'+join+'" stroke-miterlimit="3"';
+  const solid = style !== 'round';
+  const glass = style === 'glass';
+  const color2 = $('color2').value;
+  const geometry = solid ? path(fill) : line;
+  const definitions = '<defs><linearGradient id="palette" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+color+'"/><stop offset="1" stop-color="'+color2+'"/></linearGradient><linearGradient id="reflection" x1="0" y1="0" x2="0.7" y2="1"><stop stop-color="#fff" stop-opacity=".85"/><stop offset=".45" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity=".35"/></linearGradient></defs>';
+  const attributes = solid ? 'fill="url(#palette)" fill-rule="evenodd"' :
+    'fill="none" stroke="url(#palette)" stroke-width="'+weight+'" stroke-linecap="round" stroke-linejoin="round"';
   const contents = '<g '+attributes+'>'+geometry+'</g>';
   const shell = '<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 24 24">';
-  $('art').innerHTML = shell+contents+'</svg>';
+  $('art').innerHTML = shell+definitions+contents+'</svg>';
   const box = $('art').querySelector('g').getBBox();
-  const maxExtent = Math.max(box.width, box.height);
-  const target = profile ? profile.extent : maxExtent + (solid ? 0 : weight);
-  const aspect = profile ? Math.pow(profile.aspect,0.65) : 1;
-  const xAspect = Math.sqrt(aspect), yAspect = 1/xAspect;
-  const extent = Math.max(box.width*xAspect,box.height*yAspect);
-  const margin = solid ? 0 : weight;
-  const fit = Math.min((target-margin)*scale,23-margin)/Math.max(extent,1);
-  const transform = 'translate(12 12) scale('+n(fit*xAspect)+' '+n(fit*yAspect)+') translate('+n(-box.x-box.width/2)+' '+n(-box.y-box.height/2)+')';
-  svg = shell+'<g transform="'+transform+'">'+contents+'</g></svg>';
+  const extent = Math.max(box.width,box.height);
+  const margin = solid ? 1 : weight;
+  const fit = Math.min(extent*scale,22-margin)/Math.max(extent,1);
+  const transform = 'translate(12 12) scale('+n(fit)+') translate('+n(-box.x-box.width/2)+' '+n(-box.y-box.height/2)+')';
+  const glassLayers = '<g transform="translate(.6 1)" fill="'+color2+'" fill-rule="evenodd" opacity=".22">'+geometry+'</g><g fill="url(#palette)" fill-rule="evenodd" opacity=".55">'+geometry+'</g><g fill="url(#reflection)" fill-rule="evenodd" stroke="url(#reflection)" stroke-width=".55">'+geometry+'</g>';
+  svg = shell+definitions+'<g transform="'+transform+'">'+(glass?glassLayers:contents)+'</g></svg>';
   $('art').innerHTML = svg;
   $('stage').style.setProperty('--actual',size+'px');
   $('iconName').textContent = label;
@@ -132,6 +126,7 @@ function render() {
   $('dimensions').textContent = size+' × '+size+' px';
   $('styleCaption').textContent = styleLabel[style]+(solid ? '' : ' / '+weight+' STROKE');
   $('colorValue').textContent = color.toUpperCase();
+  $('color2Value').textContent = color2.toUpperCase();
   $('weightValue').textContent = weight;
   $('weight').disabled = solid;
   $('status').textContent = '';
@@ -181,7 +176,7 @@ $('query').oninput = () => {
   const results = matches(normalize($('query').value));
   showChips(results.length ? results.slice(0,9) : icons.slice(0,6));
 };
-document.querySelectorAll('[name=style], #size, #weight, #color, #padding').forEach(control =>
+document.querySelectorAll('[name=style], #size, #weight, #color, #color2, #padding').forEach(control =>
   control.addEventListener('input',render));
 document.querySelectorAll('button[data-preview]').forEach(button => button.onclick = () => {
   $('stage').dataset.preview = button.dataset.preview;
@@ -214,181 +209,6 @@ $('copy').onclick = async () => {
     $('status').textContent = copied ? 'SVG 코드를 복사했어요.' : '복사할 수 없어요. SVG 다운로드를 사용하세요.';
   }
 };
-const rgbHex = rgb => '#'+rgb.map(value=>value.toString(16).padStart(2,'0')).join('');
-function parseColor(value) {
-  if (!value || /^(none|transparent|inherit|url\()/i.test(value.trim())) return;
-  if (value.toLowerCase()==='currentcolor') return '#000000';
-  const context = document.createElement('canvas').getContext('2d');
-  if (!CSS.supports('color',value)) return;
-  context.fillStyle = value;
-  if (/^#[\da-f]{6}$/i.test(context.fillStyle)) return context.fillStyle;
-  context.fillRect(0,0,1,1);
-  const rgba = context.getImageData(0,0,1,1).data;
-  if (rgba[3]) return rgbHex([...rgba.slice(0,3)]);
-}
-function getSvgStyle(source) {
-  const xml = new DOMParser().parseFromString(source,'image/svg+xml');
-  const root = xml.documentElement;
-  if (root.localName !== 'svg') throw new Error('SVG 파일을 읽을 수 없어요.');
-  const shapes = [...root.querySelectorAll('path,circle,rect,ellipse,line,polyline,polygon')].filter(node=>!node.closest('defs,clipPath,mask,pattern,symbol'));
-  function inherited(node,name) {
-    for (let element=node; element; element=element.parentElement) {
-      const value = element.style?.getPropertyValue(name) || element.getAttribute(name);
-      if (value && value!=='inherit') return value.trim();
-    }
-  }
-  const strokeShape = shapes.find(node=>parseColor(inherited(node,'stroke')));
-  if (strokeShape) {
-    const view = (root.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
-    const units = Math.max(view[2]||0,view[3]||0) || parseFloat(root.getAttribute('width')) || 24;
-    const width = parseFloat(inherited(strokeShape,'stroke-width') || '1')*24/units;
-    const cap = inherited(strokeShape,'stroke-linecap'), join = inherited(strokeShape,'stroke-linejoin');
-    const radius = Number(strokeShape.getAttribute('rx'));
-    const round = ['stroke-linecap','stroke-linejoin'].some(name=>inherited(strokeShape,name)==='round');
-    return {color:parseColor(inherited(strokeShape,'stroke')), width, cap, join, radius:radius > 0 ? n(radius*24/units) : null, mode:round || radius > 0 ? 'round':'sharp'};
-  }
-  const colors = shapes.filter(node=>node.localName!=='line').map(node=>parseColor(inherited(node,'fill') || '#000000'));
-  const color = colors.find(Boolean);
-  if (color) return {color,mode:'solid'};
-  throw new Error('적용할 색상이나 선 스타일을 찾지 못했어요.');
-}
-function sampleShape(image) {
-  const canvas = document.createElement('canvas');
-  const side = 96;
-  canvas.width = canvas.height = side;
-  const context = canvas.getContext('2d',{willReadFrequently:true});
-  const fit = side / Math.max(image.naturalWidth,image.naturalHeight);
-  const w = Math.max(1,Math.round(image.naturalWidth*fit)), h = Math.max(1,Math.round(image.naturalHeight*fit));
-  const ox = Math.floor((side-w)/2), oy = Math.floor((side-h)/2);
-  context.drawImage(image,ox,oy,w,h);
-  const pixels = context.getImageData(0,0,side,side).data;
-  const at = (x,y) => (y*side+x)*4;
-  const corners = [[ox,oy],[ox+w-1,oy],[ox,oy+h-1],[ox+w-1,oy+h-1]].map(([x,y])=>pixels.slice(at(x,y),at(x,y)+4));
-  const opaque = corners.filter(color=>color[3]>230);
-  const distance = (a,b) => Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
-  const background = opaque.length === 4 ? opaque.find(color=>opaque.filter(other=>distance(color,other)<40).length>=3) : null;
-  const mask = new Uint8Array(side*side);
-  let left=side,right=-1,top=side,bottom=-1,ink=0;
-  for(let y=oy;y<oy+h;y++) for(let x=ox;x<ox+w;x++){
-    const i=at(x,y);
-    if(pixels[i+3]<115 || (background && distance(pixels.subarray(i,i+3),background)<43)) continue;
-    mask[i/4]=1;
-    left=Math.min(left,x); right=Math.max(right,x); top=Math.min(top,y); bottom=Math.max(bottom,y); ink++;
-  }
-  const width=right-left+1,height=bottom-top+1, span=Math.max(width,height);
-  if(ink<22 || Math.min(width,height)<5 || ink>w*h*.97) throw new Error('배경과 구분되는 아이콘 하나가 담긴 이미지를 사용해 주세요.');
-  const clamp = (value,min,max)=>Math.max(min,Math.min(max,value));
-  const bothRuns = [];
-  for (let y=top+1;y<bottom;y++) for(let x=left+1;x<right;x++){
-    const i=y*side+x;
-    if(mask[i] && mask[i-1] && mask[i+1] && mask[i-side] && mask[i+side]){
-      let dx=1,dy=1;
-      while(x-dx>=left && x+dx<=right && mask[i-dx] && mask[i+dx]) dx++;
-      while(y-dy>=top && y+dy<=bottom && mask[i-dy*side] && mask[i+dy*side]) dy++;
-      bothRuns.push(2*Math.min(dx,dy)-1);
-    }
-  }
-  bothRuns.sort((a,b)=>a-b);
-  const thickness = (bothRuns[Math.floor(bothRuns.length*.75)] || 2)*24/side;
-  const density = ink/(width*height);
-  const cornerSize = Math.max(1,Math.round(Math.min(width,height)*.13));
-  const occupiedCorners = [[left,top,1,1],[right,top,-1,1],[left,bottom,1,-1],[right,bottom,-1,-1]].filter(([x,y,dx,dy])=>{
-    let count=0;
-    for(let j=0;j<cornerSize;j++) for(let i=0;i<cornerSize;i++) count+=mask[(y+dy*j)*side+x+dx*i];
-    return count>=cornerSize*cornerSize*.42;
-  }).length;
-  return {aspect:clamp(width/height,.58,1.72),extent:clamp(span*24/side,14,22),
-    width:clamp(thickness,.75,3), mode:density>.49 && thickness>2 ? 'solid' : occupiedCorners>=2 ? 'sharp' : 'round',
-    radius:occupiedCorners>=2 ? null : 2.3};
-}
-const demos = [
-  ['라운드 라인','<rect x="4" y="5" width="16" height="14" rx="4" fill="none" stroke="#282624" stroke-width="1.5" stroke-linejoin="round"/>'],
-  ['샤프 라인','<path d="M2.5 7h19v10h-19z" fill="none" stroke="#282624" stroke-width="2.6" stroke-linejoin="miter"/>'],
-  ['솔리드','<path d="M6 3h12v18l-6-3-6 3z" fill="#282624"/>']
-];
-const originalStyle = {mode:'round',weight:'1.5',size:'24',padding:'1'};
-function selectStyle(mode) {
-  document.querySelector('[name=style][value='+mode+']').checked = true;
-}
-function removeReference() {
-  if(referenceUrl) URL.revokeObjectURL(referenceUrl);
-  referenceUrl=null;
-  $('thumb').removeAttribute('src');
-  $('referenceView').hidden=$('clear').hidden=true;
-  $('referenceDetails').replaceChildren();
-  for(const button of $('demos').children) button.setAttribute('aria-pressed','false');
-}
-$('clear').onclick=()=>{
-  referenceRequest++;
-  removeReference();
-  profile=null;
-  $('reference').value='';
-  $('referenceNote').classList.remove('error');
-  $('referenceNote').textContent=referenceHint;
-  selectStyle(originalStyle.mode);
-  $('weight').value=originalStyle.weight;
-  $('size').value=originalStyle.size;
-  $('padding').value=originalStyle.padding;
-  render();
-};
-async function applyReference(file,label,demoButton) {
-  const request=++referenceRequest;
-  const url=URL.createObjectURL(file);
-  const isSvg=file.type==='image/svg+xml' || /\.svg$/i.test(file.name || '');
-  try {
-    if(file.size>8*1024*1024) throw new Error('8 MB 이하 파일을 선택해 주세요.');
-    $('referenceNote').classList.remove('error');
-    $('referenceNote').textContent='형태와 선을 분석하고 있어요.';
-    const image=new Image();
-    image.src=url;
-    await image.decode().catch(()=>{throw new Error('열 수 없는 이미지예요. SVG, PNG, JPG 또는 WebP를 선택해 주세요.');});
-    const sampled=sampleShape(image);
-    let exact={};
-    if(isSvg){
-      try {exact=getSvgStyle(await file.text());} catch {}
-    }
-    if(request!==referenceRequest) return;
-    removeReference();
-    profile={...sampled,...exact};
-    referenceUrl=url;
-    $('thumb').src=url;
-    $('referenceView').hidden=$('clear').hidden=false;
-    if(demoButton) demoButton.setAttribute('aria-pressed','true');
-    selectStyle(profile.mode);
-    if(Number.isFinite(profile.width)) $('weight').value=Math.round(Math.max(.75,Math.min(3,profile.width))*20)/20;
-    $('padding').value='1';
-    const labels=[profile.mode==='solid'?'솔리드':profile.mode==='sharp'?'각진 모서리':'둥근 모서리',
-      profile.aspect>1.2?'가로 비례':profile.aspect<.83?'세로 비례':'균형 비례',
-      profile.extent<18?'넓은 여백':'좁은 여백'];
-    $('referenceDetails').replaceChildren(...labels.map(label=>{
-      const span=document.createElement('span');
-      span.textContent=label;
-      return span;
-    }));
-    $('referenceNote').textContent=(isSvg?'스타일 적용 · ':'이미지에서 추정한 스타일 · ')+label;
-    render();
-  } catch(error) {
-    if(request!==referenceRequest) return;
-    $('referenceNote').classList.add('error');
-    $('referenceNote').textContent=error.message;
-  } finally {
-    if(referenceUrl!==url) URL.revokeObjectURL(url);
-  }
-}
-$('reference').onchange=()=>{
-  const file=$('reference').files[0];
-  if(file) applyReference(file,file.name);
-  $('reference').value='';
-};
-for(const [label,geometry] of demos) {
-  const data='<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">'+geometry+'</svg>';
-  const button=document.createElement('button');
-  button.type='button';
-  button.setAttribute('aria-pressed','false');
-  button.innerHTML=data+'<span>'+label+'</span>';
-  button.onclick=()=>applyReference(new Blob([data],{type:'image/svg+xml'}),label,button);
-  $('demos').append(button);
-}
 showChips(icons,'catalog');
 showChips(icons.slice(0,6));
 render();
