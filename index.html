@@ -28,8 +28,8 @@
 <div class="style-grid">
 <label>크기<select id="size"><option>16</option><option>20</option><option selected>24</option><option>32</option><option>40</option><option>48</option><option>64</option><option>96</option><option>128</option></select></label>
 <label>선 굵기 (24px 기준)<span class="range"><input id="weight" type="range" min="0.75" max="3" step="0.05" value="1.5"><output id="weightValue" for="weight"></output></span></label>
-<label>색상 1<span class="color"><input type="color" id="color" value="#252421"><span class="mono" id="colorValue"></span></span></label>
-<label>색상 2<span class="color"><input type="color" id="color2" value="#91b9d9"><span class="mono" id="color2Value"></span></span></label><label>여백<select id="padding"><option value="1">기본</option><option value="0.88">넉넉하게</option><option value="1.06">촘촘하게</option></select></label>
+<label>몸체 색상<span class="color"><input type="color" id="color" value="#158ce8"><span class="mono" id="colorValue"></span></span></label>
+<label>세부 요소 색상<span class="color"><input type="color" id="color2" value="#cbdce9"><span class="mono" id="color2Value"></span></span></label><label>여백<select id="padding"><option value="1">기본</option><option value="0.88">넉넉하게</option><option value="1.06">촘촘하게</option></select></label>
 </div></section>
 
 </div>
@@ -95,6 +95,40 @@ const n = value => +value.toFixed(3);
 const styleLabel = {round:'OUTLINE',glass:'GLASS',solid:'FILLED'};
 
 let active = icons[0], svg = '';
+const details = {
+ settings: circle(12,12,4.8),
+ search: path('m15.5 17 3.8 3.8 1.5-1.5-3.8-3.8Z'),
+ home: rect(9,14,6,8,0.4),
+ heart: path('M12 7.5v13.4l8.9-8.1a5 5 0 0 0-7.1-7.1Z'),
+ bell: circle(17,6,4),
+ user: circle(12,7.8,4.8),
+ camera: circle(12,13,4.4),
+ mail: path('M3 5h18l-9 7Z'),
+ bookmark: path('M12 2h7v20l-7-5Z'),
+ calendar: rect(3,4,18,5,1),
+ lock: path('M7 9V7a5 5 0 0 1 10 0v2h-2V7a3 3 0 1 0-6 0v2Z'),
+ trash: rect(3,5,18,2,0.7),
+ cart: circle(9,20,2)+circle(18,20,2),
+ star: path('m12 2 3 6.5 7 .9-5 5 1.2 7-6.2-3.4Z'),
+ pin: circle(12,10,3),
+ play: path('M6 3v18l6-3.6V6.6Z'),
+ folder: path('M5 10h17l-3 11H2Z'),
+ chat: circle(7,10,1.3)+circle(12,10,1.3)+circle(17,10,1.3),
+ clock: path('M11 6h2v5.4l4 2.3-1 1.7-5-2.9Z'),
+ download: path('M3 16h2v4h14v-4h2v6H3Z'),
+ menu: rect(3,11,18,2,.6),
+ plus: rect(3,11,18,2,.5),
+ close: path('m4 18.5 14.5-14.5L20 5.5 5.5 20Z'),
+ check: path('m3 12 1.5-1.5L9 15l-1.5 1.5Z'),
+ 'arrow-right': path('M3 11h10v2H3Z'),
+ 'arrow-left': path('M11 11h10v2H11Z'),
+ filter: path('M2 3h20v2l-4 4H6L2 5Z'),
+ share: circle(6,12,4),
+ eye: circle(12,12,4),
+ edit: path('m14 4 2-2a2.8 2.8 0 0 1 4 0l2 2a2.8 2.8 0 0 1 0 4l-2 2Z'),
+ info: path('M11 10h2v7h-2Zm0-4h2v2h-2Z'),
+ image: path('M4 19h16v-3l-4-4-4 4-3-3-5 5Z')
+};
 function render() {
   const style = document.querySelector('[name=style]:checked').value;
   const size = $('size').value;
@@ -106,19 +140,27 @@ function render() {
   const glass = style === 'glass';
   const color2 = $('color2').value;
   const geometry = solid ? path(fill) : line;
-  const definitions = '<defs><linearGradient id="palette" x1="0" y1="0" x2="1" y2="1"><stop stop-color="'+color+'"/><stop offset="1" stop-color="'+color2+'"/></linearGradient><linearGradient id="reflection" x1="0" y1="0" x2="0.7" y2="1"><stop stop-color="#fff" stop-opacity=".85"/><stop offset=".45" stop-color="#fff" stop-opacity=".1"/><stop offset="1" stop-color="#fff" stop-opacity=".35"/></linearGradient></defs>';
-  const attributes = solid ? 'fill="url(#palette)" fill-rule="evenodd"' :
-    'fill="none" stroke="url(#palette)" stroke-width="'+weight+'" stroke-linecap="round" stroke-linejoin="round"';
-  const contents = '<g '+attributes+'>'+geometry+'</g>';
+  const detail = details[key];
+  const definitions = '<defs><linearGradient id="reflection" x1="0" y1="0" x2=".7" y2="1"><stop stop-color="#fff" stop-opacity=".8"/><stop offset=".5" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff" stop-opacity=".45"/></linearGradient><filter id="soft" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation=".55"/></filter></defs>';
+  const attributes = solid ? 'fill="'+color+'" fill-rule="evenodd"' :
+    'fill="none" stroke="'+color+'" stroke-width="'+weight+'" stroke-linecap="round" stroke-linejoin="round"';
+  const base = '<g '+attributes+'>'+geometry+'</g>';
+  const accent = '<g fill="'+color2+'" fill-rule="evenodd">'+detail+'</g>';
+  const body = key === 'settings' && glass ? '<g transform="translate(-.5 1) scale(.85)">'+base+'</g>' : base;
+  const glassPart = key === 'settings' ? '<g transform="translate(11 -1) scale(.55)">'+path(gear(false))+'</g>' : detail;
+  const glassLayers = body +
+    '<g fill="'+color2+'" opacity=".35" filter="url(#soft)" transform="translate(.4 .6)" fill-rule="evenodd">'+glassPart+'</g>'+
+    '<g fill="'+color2+'" fill-opacity=".48" stroke="#fff" stroke-opacity=".65" stroke-width=".45" fill-rule="evenodd">'+glassPart+'</g>'+
+    '<g fill="url(#reflection)" fill-rule="evenodd">'+glassPart+'</g>';
+  const contents = glass ? glassLayers : base+accent;
   const shell = '<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 24 24">';
-  $('art').innerHTML = shell+definitions+contents+'</svg>';
-  const box = $('art').querySelector('g').getBBox();
+  $('art').innerHTML = shell+definitions+'<g>'+contents+'</g></svg>';
+  const box = $('art').querySelector('svg > g').getBBox();
   const extent = Math.max(box.width,box.height);
-  const margin = solid ? 1 : weight;
+  const margin = solid ? 2 : weight;
   const fit = Math.min(extent*scale,22-margin)/Math.max(extent,1);
   const transform = 'translate(12 12) scale('+n(fit)+') translate('+n(-box.x-box.width/2)+' '+n(-box.y-box.height/2)+')';
-  const glassLayers = '<g transform="translate(.6 1)" fill="'+color2+'" fill-rule="evenodd" opacity=".22">'+geometry+'</g><g fill="url(#palette)" fill-rule="evenodd" opacity=".55">'+geometry+'</g><g fill="url(#reflection)" fill-rule="evenodd" stroke="url(#reflection)" stroke-width=".55">'+geometry+'</g>';
-  svg = shell+definitions+'<g transform="'+transform+'">'+(glass?glassLayers:contents)+'</g></svg>';
+  svg = shell+definitions+'<g transform="'+transform+'">'+contents+'</g></svg>';
   $('art').innerHTML = svg;
   $('stage').style.setProperty('--actual',size+'px');
   $('iconName').textContent = label;
