@@ -1,0 +1,397 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Icon Studio</title>
+<style>
+:root{color-scheme:light;--ink:#22211f;--muted:#66635e;--line:#d6d3cd;--paper:#f8f7f4;--accent:#bd3c2b}*{box-sizing:border-box}body{margin:0;background:#e7e5e0;color:var(--ink);font-family:Inter,Arial,"Apple SD Gothic Neo",sans-serif;font-size:14px}button,input,select{font:inherit;color:inherit}button{cursor:pointer}button:disabled{cursor:default;opacity:.45}button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--accent);outline-offset:3px}.shell{max-width:1320px;margin:clamp(16px,5vw,72px) auto;background:var(--paper);border:1px solid var(--line);width:calc(100% - clamp(24px,10vw,148px))}header,footer{display:flex;align-items:center;justify-content:space-between;padding:17px 26px;gap:12px}header{border-bottom:1px solid var(--line)}.wordmark{font-size:24px;font-weight:700;letter-spacing:-.085em}.wordmark span{color:var(--accent)}.mono{font:11px ui-monospace,monospace;letter-spacing:.1em;text-transform:uppercase}.muted{color:var(--muted)}main{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(325px,1fr)}.left{display:flex;min-width:0;flex-direction:column;border-right:1px solid var(--line)}.stage{position:relative;isolation:isolate;min-height:416px;flex:1;display:grid;place-items:center;background:radial-gradient(ellipse at 50% 45%,#f5f4f0 0,#e9e7e2 73%);overflow:hidden}.stage-top,.stage-bottom{position:absolute;left:22px;right:22px;display:flex;justify-content:space-between;align-items:center;gap:10px}.stage-top{top:19px}.stage-bottom{bottom:19px}.preview-controls{display:flex;gap:4px}.preview-controls button{width:30px;height:28px;border:1px solid transparent;background:transparent}.preview-controls button[aria-pressed=true]{border-color:#a9a49c;background:#f8f7f4}.guides{position:absolute;width:min(68%,304px);aspect-ratio:1;color:#b8b3ab;background:linear-gradient(90deg,transparent calc(50% - .5px),#ccc8c0 calc(50% - .5px),#ccc8c0 calc(50% + .5px),transparent calc(50% + .5px)),linear-gradient(transparent calc(50% - .5px),#ccc8c0 calc(50% - .5px),#ccc8c0 calc(50% + .5px),transparent calc(50% + .5px));border:1px solid #c7c2b9;pointer-events:none}.guides:after{content:"";position:absolute;inset:12.5%;border:1px dashed #c7c2b9;border-radius:50%}.stage[data-preview=clean] .guides{display:none}.stage[data-preview=actual] .guides{display:none}.art{position:relative;width:min(53%,235px);aspect-ratio:1;display:grid;place-items:center}.art svg{display:block;width:100%;height:100%}.stage[data-preview=actual] svg{width:var(--actual);height:var(--actual)}.specimen{border-top:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;gap:12px;padding:19px 22px}.specimen h1{margin:0 0 4px;font-size:23px;font-weight:550;letter-spacing:-.04em}.exports{display:flex;gap:6px;flex-wrap:wrap}.ghost,.primary{border:1px solid var(--line);background:transparent;padding:10px 12px;min-height:40px}.ghost:hover:not(:disabled),.chip:hover{background:#edeae4}.primary{background:#262522;color:#fff;border-color:#262522}.primary:hover:not(:disabled){background:#46433e}.panel{padding:25px}.section{border-top:1px solid var(--line);padding:17px 0}.section:first-child{border-top:0;padding-top:0}.section:last-child{padding-bottom:0}h2{font-size:13px;font-weight:700;margin:0 0 10px}.query{display:flex}.query input{flex:1;min-width:0;border:1px solid var(--line);border-right:0;background:#fff;padding:8px 10px}.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.chip{border:1px solid var(--line);background:transparent;padding:4px 7px;font-size:11px}.seg{display:flex}.seg label{position:relative;flex:1}.seg input{position:absolute;opacity:0;width:1px;height:1px}.seg span{display:block;text-align:center;border:1px solid var(--line);padding:8px 2px;font-size:11px;cursor:pointer}.seg label+label span{border-left:0}.seg input:checked+span{background:#262522;color:#fff}.seg input:focus-visible+span{outline:2px solid var(--accent);outline-offset:2px;position:relative;z-index:1}.style-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px 13px;margin-top:12px}.style-grid label{display:grid;gap:6px;font-size:11px}.style-grid select,.style-grid input[type=text]{min-width:0;width:100%;height:31px;background:transparent;border:1px solid var(--line);padding:3px 5px}.color{display:flex;align-items:center;justify-content:space-between;border:1px solid var(--line);height:31px;padding:2px 5px;gap:2px}.color input{width:25px;height:24px;padding:0;border:0;background:transparent}.range{display:flex;align-items:center;gap:5px;height:31px}.range input{width:100%;min-width:0;accent-color:#262522}.range output{min-width:2.1em;text-align:right}.upload{display:flex;align-items:center;gap:10px;min-width:0}.upload input{position:absolute;opacity:0;width:1px;height:1px}.upload label{border:1px solid var(--line);padding:7px 9px;cursor:pointer;white-space:nowrap}.upload input:focus-visible+label{outline:2px solid var(--accent)}.thumb{object-fit:contain;width:37px;height:31px;background:#eee}.note{font-size:11px;line-height:1.55;color:var(--muted);margin:7px 0 0}.error{color:#a22e20}.status{min-height:17px}.visually-hidden{position:absolute;clip-path:inset(50%);width:1px;height:1px;overflow:hidden}footer{border-top:1px solid var(--line);font-size:11px;line-height:1.5}@media(max-width:760px){.shell{width:calc(100% - 24px);margin:12px auto}main{grid-template-columns:1fr}.left{border-right:0;border-bottom:1px solid var(--line)}.stage{min-height:350px}.panel{padding:20px}.specimen{flex-wrap:wrap}.stage-top,.stage-bottom{left:13px;right:13px}}@media(max-width:375px){.stage{min-height:290px}}
+
+.panel{display:flex;flex-direction:column}.reference-section{order:-1;border-top:0!important;padding-top:0}.name-section{border-top:1px solid var(--line)!important;padding-top:17px!important}.reference-demos{display:flex;gap:6px;margin-top:10px}.reference-demos button{flex:1;display:grid;justify-items:center;gap:5px;padding:7px 2px;background:#f1efeb;border:1px solid var(--line);font-size:10px}.reference-demos button:hover,.reference-demos button[aria-pressed=true]{background:#fff;border-color:#776f64}.reference-demos svg{width:26px;height:26px}.reference-view{position:absolute;left:22px;bottom:48px;padding:8px 9px;display:grid;justify-items:center;gap:5px;background:#f8f7f4;border:1px solid var(--line)}.reference-view[hidden]{display:none}.reference-view img{width:46px;height:38px;object-fit:contain}.reference-view span{font-size:9px;color:var(--muted)}.style-readout{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}.style-readout span{padding:3px 5px;border:1px solid var(--line);font-size:10px}.label-file{overflow-wrap:anywhere}.more-icon{margin-top:8px}.more-icon summary{font-size:11px;cursor:pointer;color:var(--muted)}.section:last-child{padding-bottom:17px}
+</style>
+</head>
+<body>
+<div class="shell">
+<header><div class="wordmark">Forma<span>.</span></div><span class="mono muted">Icon studio</span></header>
+<main>
+<div class="left">
+<section class="stage" id="stage" data-preview="grid" aria-label="아이콘 미리보기">
+<div class="stage-top"><span class="mono muted">Preview</span><div class="preview-controls" aria-label="미리보기 방식"><button type="button" data-preview="grid" aria-label="가이드 표시" title="가이드 표시" aria-pressed="true">⊞</button><button type="button" data-preview="clean" aria-label="가이드 숨기기" title="가이드 숨기기" aria-pressed="false">□</button><button type="button" data-preview="actual" aria-label="실제 크기" title="실제 크기" aria-pressed="false">1×</button></div></div>
+<div class="guides" aria-hidden="true"></div><div class="art" id="art" aria-hidden="true"></div>
+<div class="reference-view" id="referenceView" hidden><img id="thumb" alt="적용한 레퍼런스"><span>레퍼런스</span></div><div class="stage-bottom mono muted"><span id="dimensions"></span><span id="styleCaption"></span></div>
+</section>
+<div class="specimen"><div><h1 id="iconName">설정</h1><span class="mono muted" id="fileName">settings.svg</span></div><div class="exports"><button type="button" class="ghost" id="copy">SVG 복사</button><button type="button" class="primary" id="download">SVG 다운로드 ↓</button></div></div>
+</div>
+<div class="panel">
+<section class="section name-section"><h2><label for="query">아이콘 이름</label></h2><form id="form" class="query"><input id="query" value="설정" placeholder="예: 검색, search" maxlength="90" autocomplete="off"><button class="primary" type="submit">만들기 ↗</button></form><div class="chips" id="chips"></div><p class="note" id="queryNote" aria-live="polite">한글·영문으로 검색할 수 있어요.</p><details class="more-icon"><summary>전체 아이콘</summary><div class="chips" id="catalog"></div></details></section>
+<section class="section"><h2 id="styleTitle">스타일</h2>
+<div class="seg" role="group" aria-labelledby="styleTitle"><label><input type="radio" name="style" value="round" checked><span>라운드</span></label><label><input type="radio" name="style" value="sharp"><span>샤프</span></label><label><input type="radio" name="style" value="solid"><span>솔리드</span></label></div>
+<div class="style-grid">
+<label>크기<select id="size"><option>16</option><option>20</option><option selected>24</option><option>32</option><option>40</option><option>48</option><option>64</option><option>96</option><option>128</option></select></label>
+<label>선 굵기 (24px 기준)<span class="range"><input id="weight" type="range" min="0.75" max="3" step="0.05" value="1.5"><output id="weightValue" for="weight"></output></span></label>
+<label>색상<span class="color"><input type="color" id="color" value="#252421"><span class="mono" id="colorValue"></span></span></label>
+<label>여백<select id="padding"><option value="1">기본</option><option value="0.88">넉넉하게</option><option value="1.06">촘촘하게</option></select></label>
+</div></section>
+<section class="section reference-section"><h2>스타일 레퍼런스</h2><div class="upload"><input type="file" id="reference" accept=".svg,.png,.jpeg,.jpg,.webp"><label for="reference">이미지 추가 ＋</label><button class="ghost" id="clear" type="button" hidden>초기화</button></div><div class="reference-demos" id="demos" aria-label="레퍼런스 예시"></div><p class="note label-file" id="referenceNote" aria-live="polite">이미지를 올리거나 예시를 선택하면 선, 모서리, 비율과 여백을 새 아이콘에 적용해요.</p><div class="style-readout" id="referenceDetails"></div></section>
+</div>
+</main>
+<footer><span>Figma 캔버스에 SVG 파일을 드래그해 가져오세요.</span><span class="status" id="status" role="status"></span></footer>
+</div>
+<script>
+const $ = id => document.getElementById(id);
+const path = d => '<path d="' + d + '"/>';
+const circle = (x,y,r) => '<circle cx="'+x+'" cy="'+y+'" r="'+r+'"/>';
+const rect = (x,y,w,h,r=0) => '<rect x="'+x+'" y="'+y+'" width="'+w+'" height="'+h+'" rx="'+r+'"/>';
+const gear = sharp => {
+  const points = Array.from({length:8}, (_, tooth) =>
+    [-0.5,-0.32,-0.23,0.23,0.32].map((offset,index) => {
+      const angle = (tooth+offset)*Math.PI/4-Math.PI/2;
+      const radius = [7.8,7.8,9.7,9.7,7.8][index];
+      return [12+radius*Math.cos(angle),12+radius*Math.sin(angle)];
+    })).flat();
+  const pair = p => p.map(n=>n.toFixed(2)).join(' ');
+  const mix = (a,b) => a.map((n,i)=>n*.78+b[i]*.22);
+  const inner = 'M15.15 12a3.15 3.15 0 1 0-6.3 0 3.15 3.15 0 1 0 6.3 0Z';
+  if (sharp) return 'M'+points.map(pair).join('L')+'Z'+inner;
+  return 'M'+pair(mix(points[0],points.at(-1))) + points.map((p,i) =>
+    'Q'+pair(p)+' '+pair(mix(p,points[(i+1)%points.length]))+'L'+pair(mix(points[(i+1)%points.length],p))
+  ).join('')+'Z'+inner;
+};
+const icons = [
+ ['settings','설정','환경설정 옵션 톱니바퀴 setting gear cog',path(gear(false)),gear(false),path(gear(true))],
+ ['search','검색','찾기 돋보기 탐색 magnifier find',''+circle(10.5,10.5,6.5)+path('m15.4 15.4 5 5'),'M10.5 3a7.5 7.5 0 0 1 5.96 12.05l4.75 4.74-1.42 1.42-4.74-4.75A7.5 7.5 0 1 1 10.5 3Zm0 2a5.5 5.5 0 1 0 0 11 5.5 5.5 0 0 0 0-11Z'],
+ ['home','홈','집 메인 house main',path('m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z'),'M2 10 12 2l10 8v10a2 2 0 0 1-2 2h-5v-8H9v8H4a2 2 0 0 1-2-2Z'],
+ ['heart','하트','좋아요 찜 즐겨찾기 love like favorite wishlist',path('M20.9 5.7a5 5 0 0 0-7.1 0L12 7.5l-1.8-1.8a5 5 0 0 0-7.1 7.1L12 21l8.9-8.2a5 5 0 0 0 0-7.1Z'),'M20.9 5.7a5 5 0 0 0-7.1 0L12 7.5l-1.8-1.8a5 5 0 0 0-7.1 7.1L12 21l8.9-8.2a5 5 0 0 0 0-7.1Z'],
+ ['bell','알림','종 notification notifications',path('M18 9a6 6 0 0 0-12 0c0 6-3 6-3 8h18c0-2-3-2-3-8Zm-8 11a2 2 0 0 0 4 0'),'M12 2a7 7 0 0 1 7 7c0 5 3 5 3 8v1H2v-1c0-3 3-3 3-8a7 7 0 0 1 7-7Zm-3 18h6a3 3 0 0 1-6 0Z'],
+ ['user','프로필','유저 사람 계정 사용자 person account profile',circle(12,8,4)+path('M4 21v-2a5 5 0 0 1 5-5h6a5 5 0 0 1 5 5v2Z'),'M12 3a5 5 0 1 1 0 10 5 5 0 0 1 0-10ZM3 22v-3a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v3Z'],
+ ['camera','카메라','촬영 사진찍기 photo camera',path('M3 6h4l2-3h6l2 3h4v14H3Z')+circle(12,13,3.5),'M2 5h5l2-3h6l2 3h5v16H2Zm10 3.5a4.5 4.5 0 1 0 0 9 4.5 4.5 0 0 0 0-9Z'],
+ ['mail','메일','이메일 편지 email envelope',rect(3,5,18,14,2)+path('m4 7 8 6 8-6'),'M2 6l10 7 10-7v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2Zm2-2h16l-8 6Z'],
+ ['bookmark','북마크','저장 책갈피 save',path('M6 3h12v18l-6-4.5L6 21Z'),'M5 2h14v20l-7-5-7 5Z'],
+ ['calendar','캘린더','달력 일정 schedule',rect(3,5,18,16,2)+path('M7 3v4m10-4v4M3 10h18m-13 5h2m4 0h2'),'M6 2h2v2h8V2h2v2h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2ZM4 9v2h16V9Z'],
+ ['lock','잠금','보안 security password',rect(5,10,14,11,2)+path('M8 10V7a4 4 0 0 1 8 0v3m-4 5v2'),'M7 9V7a5 5 0 0 1 10 0v2h1a2 2 0 0 1 2 2v9a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-9a2 2 0 0 1 2-2Zm2 0h6V7a3 3 0 1 0-6 0Zm2 5v4h2v-4Z'],
+ ['trash','휴지통','삭제 지우기 delete remove bin',path('M3 6h18M9 6V3h6v3m4 0-1 15H6L5 6m5 4v7m4-7v7'),'M8 3h8v2h5v2H3V5h5Zm-3 6h14l-1 12H6Zm4 2v7h2v-7Zm4 0v7h2v-7Z'],
+ ['cart','장바구니','카트 쇼핑 shopping cart',path('M2 3h3l3 13h11l3-10H6')+circle(9,20,1)+circle(18,20,1),'M2 2h4l1 3h15l-3 11H8L4.4 4H2Zm7 16a2 2 0 1 1 0 4 2 2 0 0 1 0-4Zm9 0a2 2 0 1 1 0 4 2 2 0 0 1 0-4Z'],
+ ['star','별','별점 즐겨찾기 평가 rating',path('m12 2 3 6.5 7 .9-5 5 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-5 7-.9Z'),'m12 2 3 6.5 7 .9-5 5 1.2 7-6.2-3.4-6.2 3.4 1.2-7-5-5 7-.9Z'],
+ ['pin','위치','지도 장소 위치핀 map location marker',path('M19 10c0 5-7 11-7 11S5 15 5 10a7 7 0 0 1 14 0Z')+circle(12,10,2.2),'M12 2a8 8 0 0 1 8 8c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 8-8Zm0 5a3 3 0 1 0 0 6 3 3 0 0 0 0-6Z'],
+ ['play','재생','플레이 동영상 video',path('M7 4v16l13-8Z'),'M6 3v18l15-9Z'],
+ ['folder','폴더','디렉터리 directory',path('M3 5h7l2 3h9v12H3Z'),'M2 4h8l3 3h9v14H2Z'],
+ ['chat','채팅','메시지 대화 말풍선 메시지 message comment bubble',path('M21 4H3v13h5v4l5-4h8Z'),'M2 3h20v15h-9l-6 4v-4H2Z'],
+ ['clock','시계','시간 최근기록 history time',circle(12,12,9)+path('M12 7v5l4 2'),'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1 4h2v5.4l4 2.3-1 1.7-5-2.9Z'],
+ ['download','다운로드','내려받기 export',path('M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5'),'M11 2h2v8h5l-6 6-6-6h5ZM3 16h2v4h14v-4h2v6H3Z'],
+ ['menu','메뉴','햄버거 hamburger bars',path('M4 6h16M4 12h16M4 18h16'),'M3 5h18v2H3Zm0 6h18v2H3Zm0 6h18v2H3Z'],
+ ['plus','추가','더하기 플러스 add create',path('M12 4v16M4 12h16'),'M11 3h2v8h8v2h-8v8h-2v-8H3v-2h8Z'],
+ ['close','닫기','엑스 취소 x cancel',path('m5 5 14 14M19 5 5 19'),'m4 5.5 1.5-1.5 6.5 6.5L18.5 4 20 5.5 13.5 12l6.5 6.5-1.5 1.5-6.5-6.5L5.5 20 4 18.5l6.5-6.5Z'],
+ ['check','체크','확인 완료 tick done checkmark',path('m4 12 5 5L20 6'),'m3 12 1.5-1.5L9 15l10.5-10.5L21 6 9 18Z'],
+ ['arrow-right','오른쪽 화살표','화살표 다음 arrow right next',path('M3 12h17m-7-7 7 7-7 7'),'m13 4 8 8-8 8-1.5-1.5L17 13H3v-2h14l-5.5-5.5Z'],
+ ['arrow-left','왼쪽 화살표','이전 뒤로 back left',path('M21 12H4m7-7-7 7 7 7'),'m11 4-8 8 8 8 1.5-1.5L7 13h14v-2H7l5.5-5.5Z'],
+ ['filter','필터','깔때기 funnel',path('M3 4h18l-7 8v7l-4 2v-9Z'),'M2 3h20v2l-8 8v7l-4 2v-9L2 5Z'],
+ ['share','공유','공유하기 보내기 share',circle(18,5,3)+circle(6,12,3)+circle(18,19,3)+path('m8.5 10.5 7-4m-7 7 7 4'),'M18 1a4 4 0 1 1-3.4 6.1l-5 3a4 4 0 0 1 0 3.8l5 3a4 4 0 1 1-1 1.73l-5-3a4 4 0 1 1 0-7.26l5-3A4 4 0 0 1 18 1Z'],
+ ['eye','보기','눈 표시 가시성 visibility view',path('M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z')+circle(12,12,2.8),'M1 12s4-8 11-8 11 8 11 8-4 8-11 8S1 12 1 12Zm11-4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z'],
+ ['edit','편집','수정 연필 pencil write',path('m4 16 12-12a2.8 2.8 0 0 1 4 4L8 20l-5 1Zm10-10 4 4'),'M3 15 14 4l6 6L9 21l-7 1Zm13-13a2.8 2.8 0 0 1 4 0l2 2a2.8 2.8 0 0 1 0 4l-1 1-6-6Z'],
+ ['info','정보','안내 도움말 information about',circle(12,12,9)+path('M12 11v6m0-10h.01'),'M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm-1 8h2v7h-2Zm0-4h2v2h-2Z'],
+ ['image','이미지','사진 갤러리 landscape picture photo gallery',rect(3,3,18,18,2)+circle(8,8,1.5)+path('m3 17 5-5 4 4 4-5 5 5'),'M4 2h16a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm4 4a2 2 0 1 0 0 4 2 2 0 0 0 0-4ZM4 19h16v-3l-4-4-4 4-3-3-5 5Z'],
+];
+const normalize = value => value.normalize('NFKC').toLowerCase().replace(/[^\p{L}\p{N}]/gu,'');
+const n = value => +value.toFixed(3);
+const styleLabel = {round:'ROUND',sharp:'SHARP',solid:'SOLID'};
+const referenceHint = $('referenceNote').textContent;
+let active = icons[0], svg = '', referenceUrl, referenceRequest = 0, profile = null;
+function render() {
+  const style = document.querySelector('[name=style]:checked').value;
+  const size = $('size').value;
+  const weight = +$('weight').value;
+  const color = $('color').value;
+  const scale = +$('padding').value;
+  const [key,label,,line,fill,sharp] = active;
+  const solid = style === 'solid';
+  const cap = style === 'round' ? 'round' : (profile?.cap === 'square' ? 'square' : 'butt');
+  const join = style === 'round' ? 'round' : (profile?.join === 'bevel' ? 'bevel' : 'miter');
+  let geometry = solid ? path(key === 'settings' && profile?.mode === 'sharp' ? gear(true) : fill) :
+    style === 'sharp' ? (sharp || line.replace(/rx="[^"]*"/g,'rx="0"')) : line;
+  if (style === 'round' && profile?.radius != null) {
+    geometry = geometry.replace(/rx="[^"]*"/g,'rx="'+profile.radius+'"');
+  }
+  const attributes = solid ? 'fill="'+color+'" fill-rule="evenodd"' :
+    'fill="none" stroke="'+color+'" stroke-width="'+weight+'" stroke-linecap="'+cap+'" stroke-linejoin="'+join+'" stroke-miterlimit="3"';
+  const contents = '<g '+attributes+'>'+geometry+'</g>';
+  const shell = '<svg xmlns="http://www.w3.org/2000/svg" width="'+size+'" height="'+size+'" viewBox="0 0 24 24">';
+  $('art').innerHTML = shell+contents+'</svg>';
+  const box = $('art').querySelector('g').getBBox();
+  const maxExtent = Math.max(box.width, box.height);
+  const target = profile ? profile.extent : maxExtent + (solid ? 0 : weight);
+  const aspect = profile ? Math.pow(profile.aspect,0.65) : 1;
+  const xAspect = Math.sqrt(aspect), yAspect = 1/xAspect;
+  const extent = Math.max(box.width*xAspect,box.height*yAspect);
+  const margin = solid ? 0 : weight;
+  const fit = Math.min((target-margin)*scale,23-margin)/Math.max(extent,1);
+  const transform = 'translate(12 12) scale('+n(fit*xAspect)+' '+n(fit*yAspect)+') translate('+n(-box.x-box.width/2)+' '+n(-box.y-box.height/2)+')';
+  svg = shell+'<g transform="'+transform+'">'+contents+'</g></svg>';
+  $('art').innerHTML = svg;
+  $('stage').style.setProperty('--actual',size+'px');
+  $('iconName').textContent = label;
+  $('fileName').textContent = key + '.svg';
+  $('dimensions').textContent = size+' × '+size+' px';
+  $('styleCaption').textContent = styleLabel[style]+(solid ? '' : ' / '+weight+' STROKE');
+  $('colorValue').textContent = color.toUpperCase();
+  $('weightValue').textContent = weight;
+  $('weight').disabled = solid;
+  $('status').textContent = '';
+}
+function selectIcon(icon) {
+  active = icon;
+  $('query').value = icon[1];
+  $('queryNote').classList.remove('error');
+  $('queryNote').textContent = '한글·영문으로 검색할 수 있어요.';
+  render();
+}
+function showChips(items, container = 'chips') {
+  $(container).replaceChildren(...items.map(icon => {
+    const button = document.createElement('button');
+    button.className = 'chip';
+    button.type = 'button';
+    button.textContent = icon[1];
+    button.onclick = () => {selectIcon(icon); showChips(icons.slice(0,6));};
+    return button;
+  }));
+}
+const entries = icons.map(icon => ({
+  icon, primary:[normalize(icon[0]), normalize(icon[1])],
+  aliases:icon[2].split(' ').map(normalize)
+}));
+function matches(query) {
+  if (!query) return [];
+  return entries.map(entry => {
+    const terms = [...entry.primary,...entry.aliases];
+    const score = entry.primary.includes(query) ? 4 : entry.aliases.includes(query) ? 3 :
+      terms.some(term => term.startsWith(query)) ? 2 : terms.some(term => term.includes(query)) ? 1 : 0;
+    return {icon:entry.icon,score};
+  }).filter(entry => entry.score).sort((a,b)=>b.score-a.score).map(entry=>entry.icon);
+}
+$('form').onsubmit = event => {
+  event.preventDefault();
+  const query = normalize($('query').value).replace(/아이콘$|icon$/,'');
+  const results = matches(query);
+  if (results.length) return selectIcon(results[0]);
+  $('queryNote').classList.add('error');
+  $('queryNote').textContent = query ? '등록된 이름에 없어요. 아래 목록에서 골라 보세요.' : '아이콘 이름을 입력해 주세요.';
+  showChips(icons);
+};
+$('query').oninput = () => {
+  $('queryNote').classList.remove('error');
+  $('queryNote').textContent = '한글·영문으로 검색할 수 있어요.';
+  const results = matches(normalize($('query').value));
+  showChips(results.length ? results.slice(0,9) : icons.slice(0,6));
+};
+document.querySelectorAll('[name=style], #size, #weight, #color, #padding').forEach(control =>
+  control.addEventListener('input',render));
+document.querySelectorAll('button[data-preview]').forEach(button => button.onclick = () => {
+  $('stage').dataset.preview = button.dataset.preview;
+  document.querySelectorAll('button[data-preview]').forEach(item => item.setAttribute('aria-pressed',String(item===button)));
+});
+function saveSvg() {
+  const url = URL.createObjectURL(new Blob([svg],{type:'image/svg+xml'}));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = active[0]+'.svg';
+  link.click();
+  setTimeout(()=>URL.revokeObjectURL(url),10000);
+  $('status').textContent = link.download+' 저장 요청 완료';
+}
+$('download').onclick = saveSvg;
+$('copy').onclick = async () => {
+  try {
+    await navigator.clipboard.writeText(svg);
+    $('status').textContent = 'SVG 코드를 복사했어요.';
+  } catch {
+    const field = document.createElement('textarea');
+    field.className = 'visually-hidden';
+    field.value = svg;
+    document.body.append(field);
+    field.select();
+    let copied = false;
+    try { copied = document.execCommand('copy'); } catch {}
+    field.remove();
+    $('copy').focus();
+    $('status').textContent = copied ? 'SVG 코드를 복사했어요.' : '복사할 수 없어요. SVG 다운로드를 사용하세요.';
+  }
+};
+const rgbHex = rgb => '#'+rgb.map(value=>value.toString(16).padStart(2,'0')).join('');
+function parseColor(value) {
+  if (!value || /^(none|transparent|inherit|url\()/i.test(value.trim())) return;
+  if (value.toLowerCase()==='currentcolor') return '#000000';
+  const context = document.createElement('canvas').getContext('2d');
+  if (!CSS.supports('color',value)) return;
+  context.fillStyle = value;
+  if (/^#[\da-f]{6}$/i.test(context.fillStyle)) return context.fillStyle;
+  context.fillRect(0,0,1,1);
+  const rgba = context.getImageData(0,0,1,1).data;
+  if (rgba[3]) return rgbHex([...rgba.slice(0,3)]);
+}
+function getSvgStyle(source) {
+  const xml = new DOMParser().parseFromString(source,'image/svg+xml');
+  const root = xml.documentElement;
+  if (root.localName !== 'svg') throw new Error('SVG 파일을 읽을 수 없어요.');
+  const shapes = [...root.querySelectorAll('path,circle,rect,ellipse,line,polyline,polygon')].filter(node=>!node.closest('defs,clipPath,mask,pattern,symbol'));
+  function inherited(node,name) {
+    for (let element=node; element; element=element.parentElement) {
+      const value = element.style?.getPropertyValue(name) || element.getAttribute(name);
+      if (value && value!=='inherit') return value.trim();
+    }
+  }
+  const strokeShape = shapes.find(node=>parseColor(inherited(node,'stroke')));
+  if (strokeShape) {
+    const view = (root.getAttribute('viewBox') || '').trim().split(/[\s,]+/).map(Number);
+    const units = Math.max(view[2]||0,view[3]||0) || parseFloat(root.getAttribute('width')) || 24;
+    const width = parseFloat(inherited(strokeShape,'stroke-width') || '1')*24/units;
+    const cap = inherited(strokeShape,'stroke-linecap'), join = inherited(strokeShape,'stroke-linejoin');
+    const radius = Number(strokeShape.getAttribute('rx'));
+    const round = ['stroke-linecap','stroke-linejoin'].some(name=>inherited(strokeShape,name)==='round');
+    return {color:parseColor(inherited(strokeShape,'stroke')), width, cap, join, radius:radius > 0 ? n(radius*24/units) : null, mode:round || radius > 0 ? 'round':'sharp'};
+  }
+  const colors = shapes.filter(node=>node.localName!=='line').map(node=>parseColor(inherited(node,'fill') || '#000000'));
+  const color = colors.find(Boolean);
+  if (color) return {color,mode:'solid'};
+  throw new Error('적용할 색상이나 선 스타일을 찾지 못했어요.');
+}
+function sampleShape(image) {
+  const canvas = document.createElement('canvas');
+  const side = 96;
+  canvas.width = canvas.height = side;
+  const context = canvas.getContext('2d',{willReadFrequently:true});
+  const fit = side / Math.max(image.naturalWidth,image.naturalHeight);
+  const w = Math.max(1,Math.round(image.naturalWidth*fit)), h = Math.max(1,Math.round(image.naturalHeight*fit));
+  const ox = Math.floor((side-w)/2), oy = Math.floor((side-h)/2);
+  context.drawImage(image,ox,oy,w,h);
+  const pixels = context.getImageData(0,0,side,side).data;
+  const at = (x,y) => (y*side+x)*4;
+  const corners = [[ox,oy],[ox+w-1,oy],[ox,oy+h-1],[ox+w-1,oy+h-1]].map(([x,y])=>pixels.slice(at(x,y),at(x,y)+4));
+  const opaque = corners.filter(color=>color[3]>230);
+  const distance = (a,b) => Math.hypot(a[0]-b[0],a[1]-b[1],a[2]-b[2]);
+  const background = opaque.length === 4 ? opaque.find(color=>opaque.filter(other=>distance(color,other)<40).length>=3) : null;
+  const mask = new Uint8Array(side*side);
+  let left=side,right=-1,top=side,bottom=-1,ink=0;
+  for(let y=oy;y<oy+h;y++) for(let x=ox;x<ox+w;x++){
+    const i=at(x,y);
+    if(pixels[i+3]<115 || (background && distance(pixels.subarray(i,i+3),background)<43)) continue;
+    mask[i/4]=1;
+    left=Math.min(left,x); right=Math.max(right,x); top=Math.min(top,y); bottom=Math.max(bottom,y); ink++;
+  }
+  const width=right-left+1,height=bottom-top+1, span=Math.max(width,height);
+  if(ink<22 || Math.min(width,height)<5 || ink>w*h*.97) throw new Error('배경과 구분되는 아이콘 하나가 담긴 이미지를 사용해 주세요.');
+  const clamp = (value,min,max)=>Math.max(min,Math.min(max,value));
+  const bothRuns = [];
+  for (let y=top+1;y<bottom;y++) for(let x=left+1;x<right;x++){
+    const i=y*side+x;
+    if(mask[i] && mask[i-1] && mask[i+1] && mask[i-side] && mask[i+side]){
+      let dx=1,dy=1;
+      while(x-dx>=left && x+dx<=right && mask[i-dx] && mask[i+dx]) dx++;
+      while(y-dy>=top && y+dy<=bottom && mask[i-dy*side] && mask[i+dy*side]) dy++;
+      bothRuns.push(2*Math.min(dx,dy)-1);
+    }
+  }
+  bothRuns.sort((a,b)=>a-b);
+  const thickness = (bothRuns[Math.floor(bothRuns.length*.75)] || 2)*24/side;
+  const density = ink/(width*height);
+  const cornerSize = Math.max(1,Math.round(Math.min(width,height)*.13));
+  const occupiedCorners = [[left,top,1,1],[right,top,-1,1],[left,bottom,1,-1],[right,bottom,-1,-1]].filter(([x,y,dx,dy])=>{
+    let count=0;
+    for(let j=0;j<cornerSize;j++) for(let i=0;i<cornerSize;i++) count+=mask[(y+dy*j)*side+x+dx*i];
+    return count>=cornerSize*cornerSize*.42;
+  }).length;
+  return {aspect:clamp(width/height,.58,1.72),extent:clamp(span*24/side,14,22),
+    width:clamp(thickness,.75,3), mode:density>.49 && thickness>2 ? 'solid' : occupiedCorners>=2 ? 'sharp' : 'round',
+    radius:occupiedCorners>=2 ? null : 2.3};
+}
+const demos = [
+  ['라운드 라인','<rect x="4" y="5" width="16" height="14" rx="4" fill="none" stroke="#282624" stroke-width="1.5" stroke-linejoin="round"/>'],
+  ['샤프 라인','<path d="M2.5 7h19v10h-19z" fill="none" stroke="#282624" stroke-width="2.6" stroke-linejoin="miter"/>'],
+  ['솔리드','<path d="M6 3h12v18l-6-3-6 3z" fill="#282624"/>']
+];
+const originalStyle = {mode:'round',weight:'1.5',size:'24',padding:'1'};
+function selectStyle(mode) {
+  document.querySelector('[name=style][value='+mode+']').checked = true;
+}
+function removeReference() {
+  if(referenceUrl) URL.revokeObjectURL(referenceUrl);
+  referenceUrl=null;
+  $('thumb').removeAttribute('src');
+  $('referenceView').hidden=$('clear').hidden=true;
+  $('referenceDetails').replaceChildren();
+  for(const button of $('demos').children) button.setAttribute('aria-pressed','false');
+}
+$('clear').onclick=()=>{
+  referenceRequest++;
+  removeReference();
+  profile=null;
+  $('reference').value='';
+  $('referenceNote').classList.remove('error');
+  $('referenceNote').textContent=referenceHint;
+  selectStyle(originalStyle.mode);
+  $('weight').value=originalStyle.weight;
+  $('size').value=originalStyle.size;
+  $('padding').value=originalStyle.padding;
+  render();
+};
+async function applyReference(file,label,demoButton) {
+  const request=++referenceRequest;
+  const url=URL.createObjectURL(file);
+  const isSvg=file.type==='image/svg+xml' || /\.svg$/i.test(file.name || '');
+  try {
+    if(file.size>8*1024*1024) throw new Error('8 MB 이하 파일을 선택해 주세요.');
+    $('referenceNote').classList.remove('error');
+    $('referenceNote').textContent='형태와 선을 분석하고 있어요.';
+    const image=new Image();
+    image.src=url;
+    await image.decode().catch(()=>{throw new Error('열 수 없는 이미지예요. SVG, PNG, JPG 또는 WebP를 선택해 주세요.');});
+    const sampled=sampleShape(image);
+    let exact={};
+    if(isSvg){
+      try {exact=getSvgStyle(await file.text());} catch {}
+    }
+    if(request!==referenceRequest) return;
+    removeReference();
+    profile={...sampled,...exact};
+    referenceUrl=url;
+    $('thumb').src=url;
+    $('referenceView').hidden=$('clear').hidden=false;
+    if(demoButton) demoButton.setAttribute('aria-pressed','true');
+    selectStyle(profile.mode);
+    if(Number.isFinite(profile.width)) $('weight').value=Math.round(Math.max(.75,Math.min(3,profile.width))*20)/20;
+    $('padding').value='1';
+    const labels=[profile.mode==='solid'?'솔리드':profile.mode==='sharp'?'각진 모서리':'둥근 모서리',
+      profile.aspect>1.2?'가로 비례':profile.aspect<.83?'세로 비례':'균형 비례',
+      profile.extent<18?'넓은 여백':'좁은 여백'];
+    $('referenceDetails').replaceChildren(...labels.map(label=>{
+      const span=document.createElement('span');
+      span.textContent=label;
+      return span;
+    }));
+    $('referenceNote').textContent=(isSvg?'스타일 적용 · ':'이미지에서 추정한 스타일 · ')+label;
+    render();
+  } catch(error) {
+    if(request!==referenceRequest) return;
+    $('referenceNote').classList.add('error');
+    $('referenceNote').textContent=error.message;
+  } finally {
+    if(referenceUrl!==url) URL.revokeObjectURL(url);
+  }
+}
+$('reference').onchange=()=>{
+  const file=$('reference').files[0];
+  if(file) applyReference(file,file.name);
+  $('reference').value='';
+};
+for(const [label,geometry] of demos) {
+  const data='<svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24">'+geometry+'</svg>';
+  const button=document.createElement('button');
+  button.type='button';
+  button.setAttribute('aria-pressed','false');
+  button.innerHTML=data+'<span>'+label+'</span>';
+  button.onclick=()=>applyReference(new Blob([data],{type:'image/svg+xml'}),label,button);
+  $('demos').append(button);
+}
+showChips(icons,'catalog');
+showChips(icons.slice(0,6));
+render();
+</script>
+</body>
+</html>
